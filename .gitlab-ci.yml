@@ -13,16 +13,22 @@ variables:
 build-1:
   stage: build_init-container
   image: docker:26.1.4-dind
-  services:
-    - name: docker:26.1.4-dind
-      alias: docker
   variables:
     DOCKERFILE_PATH: "web/init-container/Dockerfile"
     IMAGE_PREFIX: "$DOCKER_URL/init-container:$CI_COMMIT_SHORT_SHA"
   before_script:
     - echo "$CI_COMMIT_SHORT_SHA"
     - docker info
-
+    - |
+          echo "Waiting for Docker daemon to wake up..."
+          for i in $(seq 1 30); do
+            if docker info >/dev/null 2>&1; then
+              echo "Docker is ready!"
+              break
+            fi
+            echo "Still waiting (attempt $i)..."
+            sleep 2
+          done
   script:
     - docker build --pull -f "$DOCKERFILE_PATH" -t "$IMAGE_PREFIX" .
     - docker push "$IMAGE_PREFIX"
@@ -33,6 +39,7 @@ build-2:
   services:
     - name: docker:26.1.4-dind
       alias: docker
+      command: ["--tls=false"]
   variables:
     DOCKERFILE_PATH: "web/nailloux-web/Dockerfile"
     IMAGE_PREFIX: "$DOCKER_URL/nailloux-web:$CI_COMMIT_SHORT_SHA"
