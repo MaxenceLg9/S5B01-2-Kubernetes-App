@@ -19,7 +19,7 @@ build-1:
   services:
     - name: docker:26.1.4-dind # The daemon
       alias: docker
-      command: ["--insecure-registry=nailloux.registry.com", "--tls=false"] # Since you are using port 2375 (no TLS)
+      command: ["--mtu=1300", "--insecure-registry=nailloux.registry.com", "--tls=false"] # Since you are using port 2375 (no TLS)
   before_script:
     - echo "$CI_COMMIT_SHORT_SHA"
     - |
@@ -32,7 +32,7 @@ build-1:
             echo "Still waiting (attempt $i)..."
             sleep 2
           done
-    - docker info
+    #- docker info
   script:
     - docker build --pull -f "$DOCKERFILE_PATH" -t "$IMAGE_PREFIX" .
     - docker push "$IMAGE_PREFIX"
