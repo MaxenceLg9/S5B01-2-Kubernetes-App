@@ -5,9 +5,9 @@ stages:
 
 variables:
   DOCKER_URL: "nailloux.registry.com"
-  DOCKER_HOST: tcp://docker:2376
   DOCKER_DRIVER: overlay2
-  DOCKER_TLS_CERTDIR: "/certs/client"
+  DOCKER_HOST: tcp://docker:2375
+  DOCKER_TLS_CERTDIR: ""
 
 
 build-1:
