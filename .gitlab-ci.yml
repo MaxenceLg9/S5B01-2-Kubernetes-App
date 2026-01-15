@@ -16,10 +16,12 @@ build-1:
   variables:
     DOCKERFILE_PATH: "web/init-container/Dockerfile"
     IMAGE_PREFIX: "$DOCKER_URL/init-container:$CI_COMMIT_SHORT_SHA"
+  services:
+    - name: docker:26.1.4-dind # The daemon
+      alias: docker
+      command: ["--tls=false"] # Since you are using port 2375 (no TLS)
   before_script:
     - echo "$CI_COMMIT_SHORT_SHA"
-    - echo "127.0.0.1   docker" >> /etc/hosts
-    - docker info
     - |
           echo "Waiting for Docker daemon to wake up..."
           for i in $(seq 1 30); do
@@ -30,6 +32,7 @@ build-1:
             echo "Still waiting (attempt $i)..."
             sleep 2
           done
+    - docker info
   script:
     - docker build --pull -f "$DOCKERFILE_PATH" -t "$IMAGE_PREFIX" .
     - docker push "$IMAGE_PREFIX"
