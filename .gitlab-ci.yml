@@ -14,19 +14,19 @@ build-1:
   stage: build_init-container
   image: docker:26.1.4-dind
   variables:
-    DOCKERFILE_PATH: "web/init-container/"
+    DOCKERFILE_CONTEXT: "web/init-container/"
     IMAGE_PREFIX: "$DOCKER_URL/init-container:$CI_COMMIT_SHORT_SHA"
   services:
     - name: docker:26.1.4-dind # The daemon
       alias: docker
-      command: ["--mtu=1300", "--insecure-registry=nailloux.registry.com", "--tls=false"] # Since you are using port 2375 (no TLS)
+      command: ["--insecure-registry=nailloux.registry.com", "--tls=false"] # Since you are using port 2375 (no TLS)
   before_script:
-    - echo "$CI_COMMIT_SHORT_SHA"
+    - echo "Commit SHA is $CI_COMMIT_SHORT_SHA"
     - |
           echo "Waiting for Docker daemon to wake up..."
           for i in $(seq 1 30); do
             if docker info >/dev/null 2>&1; then
-              echo "Docker is ready!"
+              echo "Docker is ready! Starting the script"
               break
             fi
             echo "Still waiting (attempt $i)..."
@@ -34,7 +34,7 @@ build-1:
           done
     #- docker info
   script:
-    - docker build --pull "$DOCKERFILE_PATH" -t "$IMAGE_PREFIX" 
+    - docker build --pull "$DOCKERFILE_CONTEXT" -t "$IMAGE_PREFIX" 
     - docker push "$IMAGE_PREFIX"
 
 build-2:
@@ -45,12 +45,12 @@ build-2:
       alias: docker
       command: ["--insecure-registry=nailloux.registry.com", "--tls=false"]
   variables:
-    DOCKERFILE_PATH: "web/nailloux-web/"
+    DOCKERFILE_CONTEXT: "web/nailloux-web/"
     IMAGE_PREFIX: "$DOCKER_URL/nailloux-web:$CI_COMMIT_SHORT_SHA"
   before_script:
-    - echo "$CI_COMMIT_SHORT_SHA"
+    - echo "Commit SHA is $CI_COMMIT_SHORT_SHA"
   script:
-    - docker build --pull "$DOCKERFILE_PATH" -t "$IMAGE_PREFIX"
+    - docker build --pull "$DOCKERFILE_CONTEXT" -t "$IMAGE_PREFIX"
     - docker push "$IMAGE_PREFIX"
 
 deploy:
