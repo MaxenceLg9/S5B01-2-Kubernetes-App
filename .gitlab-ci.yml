@@ -19,7 +19,7 @@ build-1:
   services:
     - name: docker:26.1.4-dind # The daemon
       alias: docker
-      command: ["--tls=false"] # Since you are using port 2375 (no TLS)
+      command: ["--insecure-registry=nailloux.registry.com", "--tls=false"] # Since you are using port 2375 (no TLS)
   before_script:
     - echo "$CI_COMMIT_SHORT_SHA"
     - |
@@ -41,9 +41,9 @@ build-2:
   stage: build_nailloux-web
   image: docker:26.1.4-dind
   services:
-    - name: docker:26.1.4-dind
+    - name: docker:26.1.4-dind # The daemon
       alias: docker
-      command: ["--tls=false"]
+      command: ["--insecure-registry=nailloux.registry.com", "--tls=false"]
   variables:
     DOCKERFILE_PATH: "web/nailloux-web/Dockerfile"
     IMAGE_PREFIX: "$DOCKER_URL/nailloux-web:$CI_COMMIT_SHORT_SHA"
