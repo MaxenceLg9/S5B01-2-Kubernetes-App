@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    field.cattle.io/publicEndpoints: >-
+      [{"addresses":["10.0.1.6"],"port":443,"protocol":"HTTPS","serviceName":"default:docker-registry-ui","ingressName":"default:registry-ingress","hostname":"nailloux.registry.com","path":"/","allNodes":false}]
+    nginx.ingress.kubernetes.io/proxy-body-size: '0'
+  generation: 4
+  name: web-ingress
+  namespace: default
+spec:
+  rules:
+    - host: www.nailloux.lan
+      http:
+        paths:
+          - backend:
+              service:
+                name: web
+                port:
+                  number: 80
+            path: /
+            pathType: Prefix
+  tls:
+    - hosts:
+        - www.nailloux.lan
+      secretName: web-ingress.tls
