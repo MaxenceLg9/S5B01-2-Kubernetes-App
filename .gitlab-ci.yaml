@@ -1,0 +1,65 @@
+stages:
+  - build_init-container
+  - build_nailloux-web
+  - deploy
+
+variables:
+  DOCKER_URL: "nailloux.registry.com"
+  DOCKER_HOST: tcp://docker:2375
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: ""
+  DOCKERFILE_PATH: "Dockerfile"
+
+
+build-1:
+  stage: build_init-container
+  image: docker:26.1.4-dind
+  services:
+    - name: docker:26.1.4-dind
+      alias: docker
+  variables:
+
+    IMAGE_PREFIX: "$DOCKER_URL/init-container:$CI_COMMIT_SHORT_SHA"
+  before_script:
+    - echo "$CI_COMMIT_SHORT_SHA"
+  script:
+    - docker build --pull -f "$DOCKERFILE_PATH" -t "$IMAGE_PREFIX" .
+    - docker push "$IMAGE_PREFIX"
+
+build-2:
+  stage: build_nailloux-web
+  image: docker:26.1.4-dind
+  services:
+    - name: docker:26.1.4-dind
+      alias: docker
+  variables:
+    IMAGE_PREFIX: "$DOCKER_URL/nailloux-web:$CI_COMMIT_SHORT_SHA"
+  before_script:
+    - echo "$CI_COMMIT_SHORT_SHA"
+  script:
+    - docker build --pull -f "$DOCKERFILE_PATH" -t "$IMAGE_PREFIX" .
+    - docker push "$IMAGE_PREFIX"
+
+deploy:
+  # Ce job appartient au stage "deploy"
+  stage: deploy
+  # Utilise une image Docker officielle Python 3.12
+  image: python:3.12
+  variables:
+    NODE_IP: 10.0.1.3
+  # Règles qui déterminent si le job doit être exécuté
+  # Étapes à exécuter avant le script principal
+  before_script:
+    # Installe Ansible
+  - pip install --no-cache-dir ansible
+  - mkdir -p ~/.ssh
+    # Configure la clé SSH pour se connecter à la node
+  - echo "$NODE_SSH_KEY" > ~/.ssh/id_rsa
+    # Donne les permissions appropriées à la clé privée
+  - chmod 600 ~/.ssh/id_rsa
+    # Ajoute l'IP du serveur node aux hôtes connus pour éviter les prompts interactifs
+  - ssh-keyscan -H $NODE_IP >> ~/.ssh/known_hosts
+  script:
+    - echo "Working on it"
+    # Commande pour exécuter le playbook Ansible de déploiement
+    #- ansible-playbook -i ansible/inventory ansible/deploy.yml --extra-vars "image=$IMAGE_PREFIX-$CI_COMMIT_TAG student_code=$STUDENT_CODE dockerhub_username=$DOCKERHUB_USERNAME dockerhub_token=$DOCKERHUB_TOKEN"
