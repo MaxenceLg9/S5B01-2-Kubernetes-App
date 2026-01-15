@@ -5,10 +5,9 @@ stages:
 
 variables:
   DOCKER_URL: "nailloux.registry.com"
-  DOCKER_HOST: tcp://docker:2375
+  DOCKER_HOST: tcp://docker:2376
   DOCKER_DRIVER: overlay2
-  DOCKER_TLS_CERTDIR: ""
-  DOCKERFILE_PATH: "Dockerfile"
+  DOCKER_TLS_CERTDIR: "/certs/client"
 
 
 build-1:
@@ -18,7 +17,7 @@ build-1:
     - name: docker:26.1.4-dind
       alias: docker
   variables:
-
+    DOCKERFILE_PATH: "web/init-container/Dockerfile"
     IMAGE_PREFIX: "$DOCKER_URL/init-container:$CI_COMMIT_SHORT_SHA"
   before_script:
     - echo "$CI_COMMIT_SHORT_SHA"
@@ -33,6 +32,7 @@ build-2:
     - name: docker:26.1.4-dind
       alias: docker
   variables:
+    DOCKERFILE_PATH: "web/nailloux-web/Dockerfile"
     IMAGE_PREFIX: "$DOCKER_URL/nailloux-web:$CI_COMMIT_SHORT_SHA"
   before_script:
     - echo "$CI_COMMIT_SHORT_SHA"
