@@ -33,6 +33,7 @@ build-1:
             sleep 2
           done
     #- docker info
+    - docker run --rm curlimages/curl https://registry-1.docker.io/v2/
   script:
     - docker build --pull -f "$DOCKERFILE_PATH" -t "$IMAGE_PREFIX" .
     - docker push "$IMAGE_PREFIX"
