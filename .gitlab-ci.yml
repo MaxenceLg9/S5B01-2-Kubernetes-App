@@ -14,7 +14,7 @@ build-1:
   stage: build_init-container
   image: docker:26.1.4-dind
   variables:
-    DOCKERFILE_PATH: "web/init-container/Dockerfile"
+    DOCKERFILE_PATH: "web/init-container/"
     IMAGE_PREFIX: "$DOCKER_URL/init-container:$CI_COMMIT_SHORT_SHA"
   services:
     - name: docker:26.1.4-dind # The daemon
@@ -33,9 +33,8 @@ build-1:
             sleep 2
           done
     #- docker info
-    - docker run --rm curlimages/curl https://registry-1.docker.io/v2/
   script:
-    - docker build --pull -f "$DOCKERFILE_PATH" -t "$IMAGE_PREFIX" .
+    - docker build --pull "$DOCKERFILE_PATH" -t "$IMAGE_PREFIX" 
     - docker push "$IMAGE_PREFIX"
 
 build-2:
@@ -46,12 +45,12 @@ build-2:
       alias: docker
       command: ["--insecure-registry=nailloux.registry.com", "--tls=false"]
   variables:
-    DOCKERFILE_PATH: "web/nailloux-web/Dockerfile"
+    DOCKERFILE_PATH: "web/nailloux-web/"
     IMAGE_PREFIX: "$DOCKER_URL/nailloux-web:$CI_COMMIT_SHORT_SHA"
   before_script:
     - echo "$CI_COMMIT_SHORT_SHA"
   script:
-    - docker build --pull -f "$DOCKERFILE_PATH" -t "$IMAGE_PREFIX" .
+    - docker build --pull "$DOCKERFILE_PATH" -t "$IMAGE_PREFIX"
     - docker push "$IMAGE_PREFIX"
 
 deploy:
