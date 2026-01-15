@@ -21,6 +21,7 @@ build-1:
     IMAGE_PREFIX: "$DOCKER_URL/init-container:$CI_COMMIT_SHORT_SHA"
   before_script:
     - echo "$CI_COMMIT_SHORT_SHA"
+    - systemctl status docker
   script:
     - docker build --pull -f "$DOCKERFILE_PATH" -t "$IMAGE_PREFIX" .
     - docker push "$IMAGE_PREFIX"
