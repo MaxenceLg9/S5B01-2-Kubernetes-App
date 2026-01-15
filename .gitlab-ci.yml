@@ -64,7 +64,7 @@ deploy:
   # Étapes à exécuter avant le script principal
   before_script:
     # Installe Ansible
-  - pip install --no-cache-dir ansible
+  #- pip install --no-cache-dir ansible
   - mkdir -p ~/.ssh
     # Configure la clé SSH pour se connecter à la node
   - echo "$NODE_SSH_KEY" > ~/.ssh/id_rsa
@@ -74,7 +74,7 @@ deploy:
   - ssh-keyscan -H $NODE_IP >> ~/.ssh/known_hosts
   script:
     - echo "Working on it"
-    - echo $NODE_SSH_KEY | scp -i /dev/stdin **/*.yaml sisyphe@10.0.1.4:/home/app/
+    - scp -o StrictHostKeyChecking=no **/*.yaml sisyphe@10.0.1.4:/home/app/
     - ssh -o StrictHostKeyChecking=no sisyphe@10.0.1.4 << 'EOF'
         bash
         cd /home/app/
