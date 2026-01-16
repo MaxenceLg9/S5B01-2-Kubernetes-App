@@ -34,8 +34,8 @@ build-1:
           done
     #- docker info
   script:
-    - docker build --pull "$DOCKERFILE_CONTEXT" -t "IMAGE_PREFIX:$CI_COMMIT_SHORT_SHA"
-    - docker build --pull "$DOCKERFILE_CONTEXT" -t "IMAGE_PREFIX:latest"
+    - docker build --pull "$DOCKERFILE_CONTEXT" -t "$IMAGE_PREFIX:$CI_COMMIT_SHORT_SHA"
+    - docker build --pull "$DOCKERFILE_CONTEXT" -t "$IMAGE_PREFIX:latest"
     - docker push "$IMAGE_PREFIX:latest"
     - docker push "$IMAGE_PREFIX:$CI_COMMIT_SHORT_SHA"
 
@@ -52,8 +52,8 @@ build-2:
   before_script:
     - echo "Commit SHA is $CI_COMMIT_SHORT_SHA"
   script:
-    - docker build --pull "$DOCKERFILE_CONTEXT" -t "IMAGE_PREFIX:$CI_COMMIT_SHORT_SHA"
-    - docker build --pull "$DOCKERFILE_CONTEXT" -t "IMAGE_PREFIX:latest"
+    - docker build --pull "$DOCKERFILE_CONTEXT" -t "$IMAGE_PREFIX:$CI_COMMIT_SHORT_SHA"
+    - docker build --pull "$DOCKERFILE_CONTEXT" -t "$IMAGE_PREFIX:latest"
     - docker push "$IMAGE_PREFIX:latest"
     - docker push "$IMAGE_PREFIX:$CI_COMMIT_SHORT_SHA"
 
