@@ -80,6 +80,6 @@ deploy:
         cd /home/app/
         kubectl apply -f -R .
       EOF
-    - echo "Finished job"
+    - echo "Finished job!"
     # Commande pour exécuter le playbook Ansible de déploiement
     #- ansible-playbook -i ansible/inventory ansible/deploy.yml --extra-vars "image=$IMAGE_PREFIX-$CI_COMMIT_TAG student_code=$STUDENT_CODE dockerhub_username=$DOCKERHUB_USERNAME dockerhub_token=$DOCKERHUB_TOKEN"
