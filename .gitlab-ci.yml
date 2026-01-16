@@ -76,7 +76,8 @@ deploy:
     - echo "Working on it"
     - echo "$NODE_SSH_KEY"
     - scp -o StrictHostKeyChecking=no **/*.yaml sisyphe@$NODE_IP:/home/app/
-    - ssh -o StrictHostKeyChecking=no sisyphe@$NODE_IP << 'EOF'
+    - |
+      ssh -o StrictHostKeyChecking=no sisyphe@$NODE_IP << 'EOF'
         bash
         cd /home/app/
         kubectl apply -f -R .
