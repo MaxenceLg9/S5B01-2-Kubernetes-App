@@ -28,7 +28,7 @@ if (isset($_SESSION["pseudo"])) {
                 <a href="forgot_password.php">Mot de passe oublié ?</a>
             </form>
         </div>
-
+        <h1>MODIFICATION</h1>
         <div class="register">
             <form action="/backend/db/validate.php" method="post" class="regst-form" id="regst-form" style="display: none;">
                 <input type="text" id="usrname" name="pseudo" placeholder="Nom d'utilisateur" autocomplete="off" required>
