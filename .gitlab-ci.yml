@@ -15,7 +15,7 @@ build-1:
   image: docker:26.1.4-dind
   variables:
     DOCKERFILE_CONTEXT: "web/init-container/"
-    IMAGE_PREFIX: "$DOCKER_URL/init-container:$CI_COMMIT_SHORT_SHA"
+    IMAGE_PREFIX: "$DOCKER_URL/init-container"
   services:
     - name: docker:26.1.4-dind # The daemon
       alias: docker
@@ -34,8 +34,10 @@ build-1:
           done
     #- docker info
   script:
-    - docker build --pull "$DOCKERFILE_CONTEXT" -t "$IMAGE_PREFIX" 
-    - docker push "$IMAGE_PREFIX"
+    - docker build --pull "$DOCKERFILE_CONTEXT" -t "IMAGE_PREFIX:$CI_COMMIT_SHORT_SHA"
+    - docker build --pull "$DOCKERFILE_CONTEXT" -t "IMAGE_PREFIX:latest"
+    - docker push "$IMAGE_PREFIX:latest"
+    - docker push "$IMAGE_PREFIX:$CI_COMMIT_SHORT_SHA"
 
 build-2:
   stage: build_nailloux-web
@@ -46,12 +48,14 @@ build-2:
       command: ["--insecure-registry=nailloux.registry.com", "--tls=false"]
   variables:
     DOCKERFILE_CONTEXT: "web/nailloux-web/"
-    IMAGE_PREFIX: "$DOCKER_URL/nailloux-web:$CI_COMMIT_SHORT_SHA"
+    IMAGE_PREFIX: "$DOCKER_URL/nailloux-web"
   before_script:
     - echo "Commit SHA is $CI_COMMIT_SHORT_SHA"
   script:
-    - docker build --pull "$DOCKERFILE_CONTEXT" -t "$IMAGE_PREFIX"
-    - docker push "$IMAGE_PREFIX"
+    - docker build --pull "$DOCKERFILE_CONTEXT" -t "IMAGE_PREFIX:$CI_COMMIT_SHORT_SHA"
+    - docker build --pull "$DOCKERFILE_CONTEXT" -t "IMAGE_PREFIX:latest"
+    - docker push "$IMAGE_PREFIX:latest"
+    - docker push "$IMAGE_PREFIX:$CI_COMMIT_SHORT_SHA"
 
 deploy:
   # Ce job appartient au stage "deploy"
